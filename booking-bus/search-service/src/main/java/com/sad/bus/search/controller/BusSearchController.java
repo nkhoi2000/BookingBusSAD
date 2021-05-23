@@ -1,5 +1,6 @@
 package com.sad.bus.search.controller;
 
+import org.apache.commons.logging.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import com.sad.bus.search.entity.BookingTicket;
+import com.sad.bus.search.service.TicketSearchService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,10 +19,14 @@ import java.util.List;
 public class BusSearchController {
 	@Autowired
 	private RestTemplate restTemplate;
-	
+
+	@Autowired
+	private TicketSearchService ticketSearchService;
+
 	@Autowired
 	private Environment env;
-	
+
+
 	@RequestMapping("/")
 	public String home() {
 		// This is useful for debugging
@@ -28,48 +34,34 @@ public class BusSearchController {
 		// We load balance among them, and display which instance received the request.
 		return "Hello from Gallery Service running at port: " + env.getProperty("local.server.port");
 	}
-  
-	@RequestMapping("/futa/{id}")
-	public BookingTicket getFutaTicket(@PathVariable final int id) {
-		// create gallery object
-		BookingTicket gallery = new BookingTicket();
-		gallery.setId(id);
-		
-		// get list of available images 
-		List<Object> images = restTemplate.getForObject("http://futa/futa-ticket/", List.class);
-		gallery.setTickets(images);
-		return gallery;
-	}
-	
-	//call vexere
-	@RequestMapping("/vexere/{id}")
-	public BookingTicket getVexereTicket(@PathVariable final int id) {
-		// create gallery object
-		BookingTicket gallery = new BookingTicket();
-		gallery.setId(id);
-		
-		// get list of available images 
-		List<Object> images = restTemplate.getForObject("http://vexere/vexere-ticket/", List.class);
-		gallery.setTickets(images);
-		return gallery;
-	}
-	
-	//call all tickets
+
+	// call all tickets
 	@RequestMapping("/ticket/{id}")
 	public BookingTicket getAllTicket(@PathVariable final int id) {
 		// create gallery object
-		BookingTicket gallery = new BookingTicket();
-		gallery.setId(id);
+		BookingTicket getTickets = new BookingTicket();
+		getTickets.setId(id);
 		
-		// get list of available images 
-		ArrayList<Object> images = new ArrayList<>();
-		images.add(getFutaTicket(id));
-		images.add(getVexereTicket(id));
+		// get list of available images
+		ArrayList<Object> tickets = new ArrayList<>();
 		
-		gallery.setTickets(images);
-	
-		return gallery;
+		// call futa
+		List<Object> futaTickets = ticketSearchService.callFuta();
+		if (futaTickets.size() > 0) {
+			tickets.addAll(futaTickets);
+		}
+		
+		//call vexere
+		List<Object> vexereTickets = ticketSearchService.calVexere();
+		if (vexereTickets.size() > 0) {
+			tickets.addAll(vexereTickets);
+		}
+
+		getTickets.setTickets(tickets);
+
+		return getTickets;
 	}
+
 	// -------- Admin Area --------
 	// This method should only be accessed by users with role of 'admin'
 	// We'll add the logic of role based auth later
