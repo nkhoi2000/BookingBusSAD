@@ -1,13 +1,16 @@
-package com.sad.bus.search.controller;
+package com.sad.bus.vexere.search.controller;
 
+import org.apache.commons.logging.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
-import com.sad.bus.search.entity.BookingTicket;
-import com.sad.bus.search.service.TicketSearchService;
+import com.sad.bus.vexere.search.entity.BookingTicket;
+import com.sad.bus.vexere.search.entity.VexereTickets;
+import com.sad.bus.vexere.search.service.TicketSearchService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +18,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/")
 public class BusSearchController {
+	@Autowired
+	private RestTemplate restTemplate;
 
 	@Autowired
 	private TicketSearchService ticketSearchService;
@@ -42,16 +47,11 @@ public class BusSearchController {
 		ArrayList<Object> tickets = new ArrayList<>();
 		
 		// call futa
-		List<Object> futaTickets = ticketSearchService.callFuta();
-		if (futaTickets.size() > 0) {
-			tickets.addAll(futaTickets);
-		}
-		
-		//call vexere
-		List<Object> vexereTickets = ticketSearchService.calVexere();
+		List<VexereTickets> vexereTickets = ticketSearchService.callVexere();
 		if (vexereTickets.size() > 0) {
 			tickets.addAll(vexereTickets);
 		}
+
 
 		getTickets.setTickets(tickets);
 
