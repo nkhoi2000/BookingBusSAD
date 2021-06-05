@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 import com.sad.bus.futa.entity.FutaTickets;
 
@@ -23,7 +24,12 @@ public class BusFutaController {
 		// We load balance among them, and display which instance received the request.
 		return "Hello from Image Service running at port: " + env.getProperty("local.server.port");
 	}
-		
+	
+//	public List<Object> callFuta() {
+//		List<Object> futaTickets = restTemplate.getForObject("http://localhost:1062/search-vexere/ticket/1", List.class);
+//		return futaTickets;
+//	}
+	
 	@RequestMapping("/futa-ticket")
 	public List<FutaTickets> getTickets() {
 		List<FutaTickets> getTickets = Arrays.asList(

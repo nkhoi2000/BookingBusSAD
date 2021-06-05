@@ -13,6 +13,5 @@ public class BusGatewayApplication {
     public static void main(String[] args) {
         SpringApplication.run(BusGatewayApplication.class, args);
     }
-
 }
 
