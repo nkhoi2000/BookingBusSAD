@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
@@ -37,27 +38,11 @@ public class BusSearchController {
 	}
 
 	// call all tickets
-	@RequestMapping("/ticket/{id}")
-	public BookingTicket getAllTicket(@PathVariable final int id) {
-		// create gallery object
-		BookingTicket getTickets = new BookingTicket();
-		getTickets.setId(id);
-		
-		// get list of available images
-		ArrayList<Object> tickets = new ArrayList<>();
-		
-		// call futa
-		List<VexereTickets> vexereTickets = ticketSearchService.callVexere();
-		if (vexereTickets.size() > 0) {
-			tickets.addAll(vexereTickets);
-		}
-
-
-		getTickets.setTickets(tickets);
-
-		return getTickets;
+	@RequestMapping(value = "/ticket", method = RequestMethod.GET)
+	public List<Object> getTicket(){
+		return ticketSearchService.callVexere();
 	}
-
+	
 	// -------- Admin Area --------
 	// This method should only be accessed by users with role of 'admin'
 	// We'll add the logic of role based auth later

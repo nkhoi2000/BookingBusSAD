@@ -11,10 +11,6 @@ import org.springframework.web.client.RestTemplate;
 @EnableEurekaClient
 public class BusVexereApplication {
 
-	@Bean
-	public RestTemplate getRestTemplate() {
-		return new RestTemplate();
-	}
     public static void main(String[] args) {
         SpringApplication.run(BusVexereApplication.class, args);
     }
