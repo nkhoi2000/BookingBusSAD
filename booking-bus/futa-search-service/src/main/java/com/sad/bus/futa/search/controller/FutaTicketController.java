@@ -1,19 +1,23 @@
-package com.sad.bus.vexere.search.controller;
-
+package com.sad.bus.futa.search.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.sad.bus.vexere.search.service.TicketSearchService;
+import com.sad.bus.futa.search.service.FutaTicketService;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/")
-public class BusSearchController {
+public class FutaTicketController {
+
+	@Autowired
+	private FutaTicketService ticketService;
+
 	@Autowired
 	private Environment env;
 
@@ -26,12 +30,12 @@ public class BusSearchController {
 		return "Hello from Gallery Service running at port: " + env.getProperty("local.server.port");
 	}
 
-	// call all tickets
+	// call futa tickets
 	@RequestMapping(value = "/ticket", method = RequestMethod.GET)
-	public List<Object> getTicket(){
-		return TicketSearchService.callVexere();
+	public List<Object> getTicket() {
+		return ticketService.callFuta();
 	}
-	
+
 	// -------- Admin Area --------
 	// This method should only be accessed by users with role of 'admin'
 	// We'll add the logic of role based auth later

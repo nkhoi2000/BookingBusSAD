@@ -1,15 +1,18 @@
 package com.sad.bus.futa.controller;
 
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
+import com.google.gson.Gson;
 import com.sad.bus.futa.entity.FutaTickets;
 
-import java.util.Arrays;
-import java.util.List;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 @RestController
 @RequestMapping("/")
@@ -24,18 +27,23 @@ public class BusFutaController {
 		// We load balance among them, and display which instance received the request.
 		return "Hello from Image Service running at port: " + env.getProperty("local.server.port");
 	}
-	
-//	public List<Object> callFuta() {
-//		List<Object> futaTickets = restTemplate.getForObject("http://localhost:1062/search-vexere/ticket/1", List.class);
-//		return futaTickets;
-//	}
-	
+
 	@RequestMapping("/futa-ticket")
-	public List<FutaTickets> getTickets() {
-		List<FutaTickets> getTickets = Arrays.asList(
-			new FutaTickets(1, "nha xe phương trang", "11/11/2021","293 đinh bộ lĩnh", 100000L),
-			new FutaTickets(2, "nha xe phương trang 1", "12/11/2021","123 nguyễn xí", 200000L),
-			new FutaTickets(3, "nha xe phương trang 2", "13/11/2021","321 chu van an", 200000L));
-		return getTickets;
+	public FutaTickets[] getTickets() throws Exception {
+		URL url = new URL("http://localhost:1162/search-futa/ticket");
+		HttpURLConnection _conn = (HttpURLConnection) url.openConnection();
+
+		// request config
+		_conn.setRequestMethod("GET");
+
+		BufferedReader inputReader = new BufferedReader(new InputStreamReader(_conn.getInputStream()));
+		String line;
+		StringBuilder content = new StringBuilder();
+		while (((line = inputReader.readLine()) != null)) {
+			content.append(line);
+		}
+		inputReader.close();
+		Gson gson = new Gson();
+		return gson.fromJson(content.toString(), FutaTickets[].class);
 	}
 }
