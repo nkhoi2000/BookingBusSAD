@@ -2,33 +2,23 @@ package com.sad.bus.vexere.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.sad.bus.vexere.entity.VexereTickets;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.lang.reflect.Type;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
 
-@Component
 @RestController
 @RequestMapping("/")
 public class BusVexereController {
 	@Autowired
 	private Environment env;
-
-	private HttpsURLConnection _conn;
 
 	@RequestMapping("/")
 	public String home() {
@@ -39,9 +29,9 @@ public class BusVexereController {
 	}
 
 	@RequestMapping("/vexere-ticket")
-	public List<VexereTickets> getTickets() throws Exception {
+	public VexereTickets[] getTickets() throws Exception {
 		URL url = new URL("http://localhost:1062/search-vexere/ticket");
-		_conn = (HttpsURLConnection) url.openConnection();
+		HttpsURLConnection _conn = (HttpsURLConnection) url.openConnection();
 
 		// request config
 		_conn.setRequestMethod("GET");
@@ -49,16 +39,14 @@ public class BusVexereController {
 		BufferedReader inputReader = new BufferedReader(new InputStreamReader(_conn.getInputStream()));
 		String line;
 		StringBuilder content = new StringBuilder();
-		while ((line = inputReader.readLine()) != null) {
+		while (((line = inputReader.readLine()) != null)) {
 			content.append(line);
 		}
 		inputReader.close();
 		Gson gson = new Gson();
-		Type listType = new TypeToken<ArrayList<VexereTickets>>(){}.getType();
-		List<VexereTickets> list = gson.fromJson(content.toString(), listType);
-		return list;
+		return gson.fromJson(content.toString(), VexereTickets[].class);
 	}
-	
+
 //	@RequestMapping("/vexere-ticket")
 //	public List<VexereTickets> getTickets() {
 //		List<VexereTickets> getTickets = Arrays.asList(
