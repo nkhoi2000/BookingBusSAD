@@ -1,32 +1,23 @@
-package com.sad.bus.futa.search.controller;
+package com.sad.bus.vexere.search.controller;
 
-import org.apache.commons.logging.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
-import com.sad.bus.futa.search.entity.BookingTicket;
-import com.sad.bus.futa.search.entity.FutaTickets;
-import com.sad.bus.futa.search.service.TicketSearchService;
+import com.sad.bus.vexere.search.service.VexereTicketService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping("/")
-public class BusSearchController {
-	@Autowired
-	private RestTemplate restTemplate;
-
-	@Autowired
-	private TicketSearchService ticketSearchService;
-
+public class VexereSearchController {
 	@Autowired
 	private Environment env;
 
+	@Autowired
+	private VexereTicketService ticketService;
 
 	@RequestMapping("/")
 	public String home() {
@@ -37,25 +28,9 @@ public class BusSearchController {
 	}
 
 	// call all tickets
-	@RequestMapping("/ticket/{id}")
-	public BookingTicket getAllTicket(@PathVariable final int id) {
-		// create gallery object
-		BookingTicket getTickets = new BookingTicket();
-		getTickets.setId(id);
-		
-		// get list of available images
-		ArrayList<Object> tickets = new ArrayList<>();
-		
-		// call futa
-		List<FutaTickets> futaTickets = ticketSearchService.callFuta();
-		if (futaTickets.size() > 0) {
-			tickets.addAll(futaTickets);
-		}
-
-
-		getTickets.setTickets(tickets);
-
-		return getTickets;
+	@RequestMapping(value = "/ticket", method = RequestMethod.GET)
+	public List<Object> getTicket() {
+		return ticketService.callVexere();
 	}
 
 	// -------- Admin Area --------

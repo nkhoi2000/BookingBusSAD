@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import com.sad.bus.vexere.search.entity.VexereTickets;
 
 @Component
-public class TicketSearchService {
+public class VexereTicketService {
 
 	public static List<Object> callVexere() {
 		List<Object> getTickets = Arrays.asList(
