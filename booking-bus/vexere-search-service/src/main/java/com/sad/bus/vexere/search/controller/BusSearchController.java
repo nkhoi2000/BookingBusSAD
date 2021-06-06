@@ -1,30 +1,19 @@
 package com.sad.bus.vexere.search.controller;
 
-import org.apache.commons.logging.Log;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
-import com.sad.bus.vexere.search.entity.BookingTicket;
-import com.sad.bus.vexere.search.entity.VexereTickets;
 import com.sad.bus.vexere.search.service.TicketSearchService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping("/")
 public class BusSearchController {
-	@Autowired
-	private RestTemplate restTemplate;
-
-	@Autowired
-	private TicketSearchService ticketSearchService;
-
 	@Autowired
 	private Environment env;
 
@@ -40,7 +29,7 @@ public class BusSearchController {
 	// call all tickets
 	@RequestMapping(value = "/ticket", method = RequestMethod.GET)
 	public List<Object> getTicket(){
-		return ticketSearchService.callVexere();
+		return TicketSearchService.callVexere();
 	}
 	
 	// -------- Admin Area --------
